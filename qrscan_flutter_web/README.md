@@ -29,6 +29,10 @@ In your `index.html` file (could be at the end of the body section, before `main
 ```
 
 ## Scanning a QR code
+
+
+    import 'package:tekartik_qrscan_flutter_web/src/qr_camera.dart';
+
     defined widget :
     QrCodeScan(
       maxHeight: 200,
