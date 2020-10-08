@@ -94,7 +94,6 @@ class _ScanPageState extends State<ScanPage> {
         /*
         var stream = await mediaDevices.getUserMedia(GetUserMediaConstraint(
             video: GetUserMediaVideoConstraint(deviceId: deviceInfo.deviceId)));
-
          */
         print('got user media');
 
@@ -169,7 +168,12 @@ class _ScanPageState extends State<ScanPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: AppBar(
+        title: Text(widget.title ?? 'Scan QR code'),
+      ),
+      body: Column(children: [
         Expanded(
             child: Row(
           children: <Widget>[
@@ -187,7 +191,7 @@ class _ScanPageState extends State<ScanPage> {
             ),
           ],
         ))
-      ]
+      ]),
     );
   }
 }
