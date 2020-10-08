@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'dart:async';
 import 'dart:html' hide VideoElement, MediaDevices;
 import 'package:pedantic/pedantic.dart';
@@ -9,21 +11,19 @@ import 'package:tekartik_camera_web/video_element_web.dart';
 import 'package:tekartik_js_qr/js_qr.dart';
 import 'package:tekartik_qrscan_flutter_web/src/view_registry.dart';
 
-var mediaDevices = mediaDevicesBrowser;
-
-class ScanPage extends StatefulWidget {
-  final String title;
-
-  const ScanPage({Key key, this.title}) : super(key: key);
+class QrCodeScan extends StatefulWidget {
+  double maxHeight;
+  Function(String) onScanned;
+  QrCodeScan({Key key, this.onScanned, this.maxHeight = 300}) : super(key: key);
 
   @override
-  _ScanPageState createState() => _ScanPageState();
+  _QrCodeScan createState() => _QrCodeScan();
 }
 
 var _viewType = 'tekartik-qrscan-flutter-web-canvas';
 
-class _ScanPageState extends State<ScanPage> {
-  var scaffoldKey = GlobalKey<ScaffoldState>();
+class _QrCodeScan extends State<QrCodeScan> {
+  // var scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Auto play needed for Chrome
   VideoElement videoElement;
@@ -35,7 +35,7 @@ class _ScanPageState extends State<ScanPage> {
   static var _id = 0;
   double _aspectRatio;
   Timer _timeoutTimer;
-
+  var mediaDevices = mediaDevicesBrowser;
   @override
   void dispose() {
     mediaStream?.getTracks()?.forEach((element) {
@@ -71,7 +71,7 @@ class _ScanPageState extends State<ScanPage> {
   @override
   void initState() {
     super.initState();
-    _timeoutTimer = Timer(Duration(seconds: 60), () {
+    _timeoutTimer = Timer(Duration(seconds: 300), () {
       if (mounted) {
         Navigator.of(context).pop();
       }
@@ -102,8 +102,8 @@ class _ScanPageState extends State<ScanPage> {
         await _tick();
       } on String catch (e) {
         print('error getting user Media $e');
-        scaffoldKey.currentState.showSnackBar(
-            SnackBar(content: Text('error getting user Media $e')));
+        // scaffoldKey.currentState.showSnackBar(
+        //     SnackBar(content: Text('error getting user Media $e')));
       }
     }();
   }
@@ -158,7 +158,7 @@ class _ScanPageState extends State<ScanPage> {
       _validateTimer?.cancel();
       _validateTimer = Timer(Duration(milliseconds: 800), () {
         if (mounted) {
-          Navigator.of(context).pop(data);
+          widget.onScanned(data);
         }
       });
     }
@@ -168,30 +168,18 @@ class _ScanPageState extends State<ScanPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: AppBar(
-        title: Text(widget.title ?? 'Scan QR code'),
-      ),
-      body: Column(children: [
-        Expanded(
-            child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                color: Colors.black,
-                child: _webcamWidget != null
-                    ? Align(
-                        alignment: Alignment.center,
-                        child: AspectRatio(
-                            aspectRatio: _aspectRatio, child: _webcamWidget),
-                      )
-                    : null,
-              ),
-            ),
-          ],
-        ))
-      ]),
+    return Container(
+      color: Colors.black,
+      child: _webcamWidget != null
+          ? Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                  width: widget.maxHeight * _aspectRatio,
+                  height: widget.maxHeight,
+                  child: AspectRatio(
+                      aspectRatio: _aspectRatio, child: _webcamWidget)),
+            )
+          : null,
     );
   }
 }
