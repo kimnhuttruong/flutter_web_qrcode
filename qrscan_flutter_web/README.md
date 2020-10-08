@@ -29,7 +29,13 @@ In your `index.html` file (could be at the end of the body section, before `main
 ```
 
 ## Scanning a QR code
-
+    defined widget :
+    QrCodeScan(
+      maxHeight: 200,
+      onScanned: (data) {
+        print(data);
+      },
+    )
 
 ```dart
 var qrCodeData = await scanQrCode(context, title: 'Scan QR code');
