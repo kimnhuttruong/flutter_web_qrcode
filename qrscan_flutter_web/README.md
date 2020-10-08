@@ -33,7 +33,7 @@ In your `index.html` file (could be at the end of the body section, before `main
 
     import 'package:tekartik_qrscan_flutter_web/src/qr_camera.dart';
 
-    defined widget :
+    ////defined widget :
     QrCodeScan(
       maxHeight: 200,
       onScanned: (data) {
